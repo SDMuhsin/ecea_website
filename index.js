@@ -20,7 +20,7 @@ app.use(upload.array());
 
 //NODEMAILER
 var transporter = nodemailer.createTransport({
-	service:'gmail',
+	service:'hotmail',
 	auth:{
 		user: "eceabot@hotmail.com",
 		pass: "qwerty12345"
