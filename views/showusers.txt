@@ -1,0 +1,14 @@
+doctype html
+html
+	head
+		title Ecea members
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			div.row.p-4
+				div.col-md-3.p-4.shadow
+					ul.list-group
+						each val in thirdYears
+							li.list-group-item= val
+			

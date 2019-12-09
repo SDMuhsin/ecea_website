@@ -1,0 +1,20 @@
+nav.navbar.navbar-dark.bg-dark
+	button( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation").navbar-toggler
+		span.navbar-toggler-icon
+	
+	a(href="/").navbar-brand ECEA
+	div.collapse.navbar-collapse#navbarSupportedContent
+		ul.navbar-nav ml-auto
+			li.nav-item.active
+				a(href="/").nav-link Home
+			if(!userloggedin)
+				li.nav-item
+					a(href="/signup").nav-link Sign Up
+			li.nav-item
+				if(userloggedin)
+					a(href = "/logout").nav-link Log Out
+				else
+					a(href = "/login").nav-link Log in
+			li.nav-item
+				a(href="/showusers").nav-link Members
+			

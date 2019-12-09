@@ -1,0 +1,36 @@
+doctype html
+html
+	head
+		title Sign up Page
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid
+			div.row.justify-content-center.p-4
+				div.col-8.justify-content-center.shadow.p-4
+					p.lead.font-weight-bold Sign Up
+					if(firststage=="complete")
+						p.lead.text-success #{message}
+					else
+						p.lead.text-danger #{message}
+					form( action = "/signup",method = "POST")
+						div.form-group
+							label(for="name") Name
+							input(type="text",name="name",required,placeholder="Enter name",minLength=6,maxLength=50).form-control
+						div.form-group
+							label(for="designation") Designation
+							select(name="designation").form-control
+								option student
+						div.form-group
+							label(for="instituteemail") Institute Email
+							input(type="email",name="instituteemail",required,placeholder="Enter institute email",minLength=6,maxLength=50).form-control
+						div.form-group
+							label(for="email") Personal email
+							input(type="email",name="email",required,placeholder="Enter personal email",minLength=6,maxLength=50).form-control
+						div.form-group
+							label(for="password1") Password
+							input(type="password",required,name="password1",minLength=6,maxLength=20).form-control
+						div.form-group
+							label(for="password2") Re-enter password
+							input(type="password",name="password2",required).form-control
+						button(type="submit").btn-dark.p-2 Sign up

@@ -1,0 +1,25 @@
+doctype html
+html
+	head
+		title Ecea members
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			div.row.p-4.justify-content-between
+				div.col-md-3.p-4.pt-0.shadow-sm
+					div.lead.pb-2.text-center.font-weight-bold Fourth Years
+					ul.list-group
+						each val in fourthYears
+							li.list-group-item= val
+				div.col-md-3.p-4.pt-0.shadow-sm
+					div.lead.pb-2.text-center.font-weight-bold Third Years
+					ul.list-group
+						each val in thirdYears
+							li.list-group-item= val
+				div.col-md-3.p-4.pt-0.shadow-sm
+					div.lead.pb-2.text-center.font-weight-bold Second Years
+					ul.list-group
+						each val in secondYears
+							li.list-group-item= val
+			

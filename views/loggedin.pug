@@ -1,0 +1,70 @@
+doctype html
+html
+	head
+		title Login
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		if(!userloggedin)
+			h1 RESTRICTED ACCESS
+		else 
+			//h2 Welcome #{userpersonalemail} #{userinstituteemail} #{userstage1verification} #{userstage2verification} 
+			
+			div.container-fluid
+				div.row.justify-content-center.p-4
+					div.col-10.p-4.shadow
+						p.font-weight-bold.text-center.p-2.display-4 Account Verification
+						blockquote.blockquote.p-2.px-4.text-center
+							p.mb-0 Welcome, verfying your account involves three stages. 
+							p.mb-0 In the first two stages, a verification code will be sent to your institute email and your personal email once you click the 'send code' button. Once you recieved the code, simply enter codes in the corresponding boxes.
+							p.mb-0 Stage 3 verfication is done manually by ecea once you have completed stage 1 and stage 2
+						//verification boxes
+						div.container-fluid.p-4
+							div.row.justify-content-center
+								div.col-sm-4.d-flex.justify-content-center
+									form(action="/verification",method="POST").p-1
+											div.form-group
+												input(type="hidden",name="formidentifier",value="sendcodes") 
+											button(type="submit").p-2.btn-dark Send Codes
+									
+						div.container-fluid.p-4
+							div.row.justify-content-between
+								//stage 1
+								div.col-md-3.shadow.p-3.align-items-center.align-content-center.justify-content-center
+									if(userstage1verification=="complete")
+										//VERIFIED MESSAGE
+										p.lead.text-center.my-auto.text-success.font-weight-bold Stage 1 verified
+									else
+										p.lead.text-danger #{stage1message}
+										p.lead.font-weight-bolder Stage 1 verification
+										form(action="/verification",method="POST").p-1
+											div.form-group
+												label(for="stage1verificationcode") Stage 1 verfication code
+												input(name="stage1verificationcode",type="number")
+												input(type="hidden",name="formidentifier",value="stage1") 
+											button(type="submit").p-2.btn-dark Submit
+								//stage 2
+								div.col-md-3.shadow.p-3.align-items-center.align-content-center.justify-content-center
+									if(userstage2verification=="complete")
+										p.lead.text-center.my-auto.text-success.font-weight-bold Stage 2 verified
+									else
+										p.lead.text-danger #{stage2message}
+										p.lead.font-weight-bolder Stage 2 verification
+										form(action="/verification",method="POST").p-1
+											div.form-group
+												label(for="stage2verificationcode") Stage 2 verfication code
+												input(name="stage2verificationcode",type="number")
+												input(type="hidden",name="formidentifier",value="stage2") 
+											button(type="submit").p-2.btn-dark Submit
+								//stage 1
+								div.col-md-3.shadow.p-3
+									if(userstage3verification=="complete")
+										p.lead.text-center.my-auto.text-success.font-weight-bold Stage 3 verified
+									else
+										p.lead.font-weight-bolder Stage 3 verification
+										form(action="/verification",method="POST").p-1
+											div.form-group
+												label(for="stage3verificationcode") Stage 3 verfication code
+												input(name="stage3verificationcode",type="number")
+												input(type="hidden",name="formidentifier",value="stage3") 
+											//button(type="submit").p-2.btn-dark Submit
