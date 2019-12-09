@@ -40,7 +40,7 @@ html
 										form(action="/verification",method="POST").p-1
 											div.form-group
 												label(for="stage1verificationcode") Stage 1 verfication code
-												input(name="stage1verificationcode",type="number")
+												input(name="stage1verificationcode",type="number").form-control
 												input(type="hidden",name="formidentifier",value="stage1") 
 											button(type="submit").p-2.btn-dark Submit
 								//stage 2
@@ -53,7 +53,7 @@ html
 										form(action="/verification",method="POST").p-1
 											div.form-group
 												label(for="stage2verificationcode") Stage 2 verfication code
-												input(name="stage2verificationcode",type="number")
+												input(name="stage2verificationcode",type="number").form-control
 												input(type="hidden",name="formidentifier",value="stage2") 
 											button(type="submit").p-2.btn-dark Submit
 								//stage 1
@@ -65,6 +65,6 @@ html
 										form(action="/verification",method="POST").p-1
 											div.form-group
 												label(for="stage3verificationcode") Stage 3 verfication code
-												input(name="stage3verificationcode",type="number")
+												input(name="stage3verificationcode",type="number").form-control
 												input(type="hidden",name="formidentifier",value="stage3") 
 											//button(type="submit").p-2.btn-dark Submit
