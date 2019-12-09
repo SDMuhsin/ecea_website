@@ -20,10 +20,10 @@ app.use(upload.array());
 
 //NODEMAILER
 var transporter = nodemailer.createTransport({
-	service:'hotmail',
+	service:'gmail',
 	auth:{
-		user: "eceabot@hotmail.com",
-		pass: "qwerty12345"
+		user: "sdmuhsin3011@gmail.com",
+		pass: "30111998easypass"
 	}
 });
 
@@ -365,7 +365,7 @@ app.post("/verification",( req,res ) => {
 					console.log( resp[0].stage1verificationcode , resp[0].stage2verificationcode);
 					//EMAIL TO PERSONAL EMAIL
 					var mailOptions = {
-						from: "eceabot@hotmail.com",
+						from: "sdmuhsin3011@gmail",
 						to:resp[0].personalemail,
 						subject:"ECEA Account Verification",
 						text:"Your verification code for stage 1 is " + resp[0].stage1verificationcode
@@ -377,7 +377,7 @@ app.post("/verification",( req,res ) => {
 					});
 					//EMAIL TO institute email
 					mailOptions = {
-						from: "eceabot@hotmail.com",
+						from: "sdmuhsin3011@gmail",
 						to:resp[0].instituteemail,
 						subject:"ECEA Account Verification",
 						text:"Your verification code for stage 2 is " + resp[0].stage2verificationcode
