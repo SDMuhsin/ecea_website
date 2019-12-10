@@ -65,7 +65,8 @@ function returnSessionData( req){
 					userinstituteemail:req.session.userinstituteemail,
 					userstage1verification:req.session.stage1verification,
 					userstage2verification:req.session.stage2verification,
-					userstage3verification:req.session.stage3verification
+					userstage3verification:req.session.stage3verification,
+					
 	};
 }
 //GET REQUUESTS---------------------------------------------------
@@ -107,19 +108,70 @@ app.get("/showusers", function( req,res ){
 		else{
 			console.log(res);
 			
-			var secondYears = resp.filter((item) => {return item.studyyear==2 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return item.name});
+			var secondYears = resp.filter((item) => {return item.studyyear==2 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return [item.name,item.regnumber]});
+			console.log(secondYears);
+			var thirdYears = resp.filter((item) => {return item.studyyear==3 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return [item.name,item.regnumber]});
 			console.log(thirdYears);
-			var thirdYears = resp.filter((item) => {return item.studyyear==3 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return item.name});
-			console.log(thirdYears);
-			var fourthYears = resp.filter((item) => {return item.studyyear==4 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return item.name});
-			console.log(thirdYears);
+			var fourthYears = resp.filter((item) => {return item.studyyear==4 && item.stage1verification=="complete" && item.stage2verification =="complete" && item.stage3verification =="complete"}).map((item) => {return [item.name,item.regnumber]});
+			console.log(fourthYears);
 			
-			res.render("showusers", {thirdYears:thirdYears,secondYears:secondYears,fourthYears:fourthYears});
+			res.render("showusers", {...returnSessionData(req),thirdYears:thirdYears,secondYears:secondYears,fourthYears:fourthYears});
 		}
 	})
 })
 
+//Update user profile page
+app.get("/updateprofilepage", function( req, res){
+	
+	if(!req.session.userloggedin){
+		res.render("homepage", {...returnSessionData(req)});
+	}else{
+		
+		accountModel.findOne({instituteemail: req.session.userinstituteemail}, function( err, resp){
+			if(err){res.render("error",{message:"server side error, try again"});console.log(err);}
+			
+			//update page
+			res.render("editprofile", {
+				userloggedin:req.session.userloggedin,
+				name:resp.name,
+				studyyear:resp.studyyear,
+				designation:resp.designation,
+				regnumber:resp.regnumber,
+				ecearank:resp.ecearank,
+				instituteemail:resp.instituteemail,
+				personalemail:resp.personalemail
+			})
+		});
+	}
+})
+
+app.get("/profile/:userreg", function( req,res ){
+	
+	accountModel.findOne({regnumber:req.params.userreg}, function( err,resp){
+		if(err){res.render("error", {...returnSessionData(req),message:"Server side error, try again"});console.log(err);}
+		else{
+			console.log("-----Request for viewing profile of" + req.params.userreg);
+			console.log(resp);
+			if(resp == null){
+				res.render("error",{...returnSessionData(req),message:"This profile does not exist"});
+			}else if( resp.stage3verification != "complete"){
+				res.render("error",{...returnSessionData(req),message:"This user's account is not verified"});
+			}else{
+				// PUBLIC PROFILE
+				res.render("profilepage",{...returnSessionData(req),
+					display_username:resp.name,
+					display_userregnumber:resp.regnumber,
+				
+				});
+			}
+		}
+		
+	})
+});
+
+//---------------------------------------------------------------
 //POST REQUESTS--------------------------------------------------
+//---------------------------------------------------------------
 //SIGN UP
 app.post("/signup", ( req,res ) => {
 	console.log(req.body);
@@ -275,6 +327,9 @@ app.post("/login", ( req,res ) => {
 					req.session.stage1verification = resp[0].stage1verification;
 					req.session.stage2verification = resp[0].stage2verification;
 					req.session.stage3verification = resp[0].stage3verification;
+					
+					req.session.username = resp[0].name;
+					req.session.userregnumber = resp[0].regnumber;
 					//---------------------END SESSION STUFF-------------------------//
 					
 					//send user to logged in screen
@@ -395,4 +450,24 @@ app.post("/verification",( req,res ) => {
 	}else{
 		res.render("loggedin", {...returnSessionData()});}
 });
+
+//update user profile
+app.post("/updateprofile", function( req,res ){
+	
+	try{
+		console.log("-----User " + req.session.userinstituteemail + " has requested an update");
+		console.log(req.body);
+		//update
+		accountModel.updateOne({regnumber:req.body.regnumber},req.body, function( err,resp){
+			if(err){res.render("error",{message:"Server side error, try again"});console.log(err);}
+			else{
+				console.log("-----Profile of user updated");
+				console.log(resp);
+				res.render("homepage",{...returnSessionData(req)});
+			}
+			
+		});
+	}
+	catch{}
+})
 app.listen(process.env.PORT ||3000);

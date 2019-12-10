@@ -11,15 +11,18 @@ html
 					div.lead.pb-2.text-center.font-weight-bold Fourth Years
 					ul.list-group
 						each val in fourthYears
-							li.list-group-item= val
+							li.list-group-item
+								a(href="/profile/"+val[1]).text-decoration-none= val[0]
 				div.col-md-3.p-4.pt-0.shadow-sm
 					div.lead.pb-2.text-center.font-weight-bold Third Years
 					ul.list-group
 						each val in thirdYears
-							li.list-group-item= val
+							li.list-group-item
+								a(href="/profile/"+val[1]).text-decoration-none= val[0]
 				div.col-md-3.p-4.pt-0.shadow-sm
 					div.lead.pb-2.text-center.font-weight-bold Second Years
 					ul.list-group
 						each val in secondYears
-							li.list-group-item= val
+							li.list-group-item
+								a(href="/profile/"+val[1]).text-decoration-none= val[0]
 			

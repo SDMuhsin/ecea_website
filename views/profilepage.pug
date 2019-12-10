@@ -1,0 +1,25 @@
+doctype html
+html
+	head 
+		title Member Profile
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			div.row.justify-content-center
+				div.col-md-10.p-4.shadow-sm
+					div.p-4
+						div.container-fluid
+							div.row.justify-content-center
+								div.col-10.p-1
+									p.font-weight-bold.text-center.p-1 User Profile
+							div.row.justify-content-between
+								div.col-sm-6
+									div.p-2.text-left Name
+								div.col-sm-6
+									div.p-2.text-left #{display_username}
+							div.row.justify-content-between
+								div.col-sm-6
+									div.p-2.text-left Name
+								div.col-sm-6
+									div.p-2.text-left #{display_userregnumber}
