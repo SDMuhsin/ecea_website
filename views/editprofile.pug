@@ -25,6 +25,11 @@ html
 						div.form-group
 							label(for="personalemail") Personal Email
 							input(name="personalemail",type="text",value= personalemail, readonly).form-control
+						div.form-group
+							label(for="interests") Interests (Split different interests by comma)
+							textarea(name="interests",rows="3",placeholder="Programming,Machine learning,CTS-II").form-control.rounded-0 #{interests}
+
+					
 							
 						button(type="submit").btn.btn-dark Submit changes
 		

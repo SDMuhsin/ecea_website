@@ -20,6 +20,12 @@ html
 									div.p-2.text-left #{display_username}
 							div.row.justify-content-between
 								div.col-sm-6
-									div.p-2.text-left Name
+									div.p-2.text-left Registration number
 								div.col-sm-6
 									div.p-2.text-left #{display_userregnumber}
+							div.row.justify-content-between
+								div.col-sm-6
+									div.p-2.text-left Interests
+								div.col-sm-6
+									each val in display_interests
+										div.p-2= val

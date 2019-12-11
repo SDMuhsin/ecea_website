@@ -51,7 +51,10 @@ var accountSchema = mongoose.Schema({
 	stage2verificationcode:Number,
 	stage3verificationcode:Number,
 	
-	secretsessionnumber:Number
+	secretsessionnumber:Number,
+	
+	interests:[String],
+	interviewquestions:[{type:String,question:String,answer:String}]
 });
 var accountModel = mongoose.model( "accountModel", accountSchema);
 
@@ -127,8 +130,12 @@ app.get("/updateprofilepage", function( req, res){
 		res.render("homepage", {...returnSessionData(req)});
 	}else{
 		
+		
+		
 		accountModel.findOne({instituteemail: req.session.userinstituteemail}, function( err, resp){
 			if(err){res.render("error",{message:"server side error, try again"});console.log(err);}
+			//Calculate how many question fields
+			var numberOfQuestions = resp.interviewquestions.length;
 			
 			//update page
 			res.render("editprofile", {
@@ -139,7 +146,9 @@ app.get("/updateprofilepage", function( req, res){
 				regnumber:resp.regnumber,
 				ecearank:resp.ecearank,
 				instituteemail:resp.instituteemail,
-				personalemail:resp.personalemail
+				personalemail:resp.personalemail,
+				interests:resp.interests.join(","),
+				interviewquestions:resp.interviewquestions
 			})
 		});
 	}
@@ -151,7 +160,7 @@ app.get("/profile/:userreg", function( req,res ){
 		if(err){res.render("error", {...returnSessionData(req),message:"Server side error, try again"});console.log(err);}
 		else{
 			console.log("-----Request for viewing profile of" + req.params.userreg);
-			console.log(resp);
+			//console.log(resp);
 			if(resp == null){
 				res.render("error",{...returnSessionData(req),message:"This profile does not exist"});
 			}else if( resp.stage3verification != "complete"){
@@ -161,6 +170,7 @@ app.get("/profile/:userreg", function( req,res ){
 				res.render("profilepage",{...returnSessionData(req),
 					display_username:resp.name,
 					display_userregnumber:resp.regnumber,
+					display_interests:resp.interests
 				
 				});
 			}
@@ -458,6 +468,9 @@ app.post("/updateprofile", function( req,res ){
 		console.log("-----User " + req.session.userinstituteemail + " has requested an update");
 		console.log(req.body);
 		//update
+		var formCopy = req.body;
+		var rawString = formCopy.interests;
+		formCopy.interests = formCopy.interests.split(",");
 		accountModel.updateOne({regnumber:req.body.regnumber},req.body, function( err,resp){
 			if(err){res.render("error",{message:"Server side error, try again"});console.log(err);}
 			else{
