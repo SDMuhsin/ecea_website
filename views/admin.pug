@@ -1,0 +1,24 @@
+doctype html
+html
+	head
+		title Admin
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			div.row.justify-content-center.p-4
+				p.lead.p-2.text-center Admin panel
+			
+			
+			each val in users
+				div.row.justify-content-center
+					div.col-10.shadow-sm.my-2.p-2
+						div.p-1 Name #{val.name}
+						div.p-1 Email #{val.instituteemail}
+						div.p-1 Registration Number #{val.regnumber}
+						div.p-1 Stage 1 #{val.stage1verification}
+						div.p-1 Stage 2 #{val.stage2verification}
+						div.p-1 Stage 3 #{val.stage3verification}
+						form(action="/adminverification",method="POST")
+							input(name="regnumbertoverify",type="text",value= val.regnumber,hidden)
+							button(type="submit").btn.btn-dark VERIFY 

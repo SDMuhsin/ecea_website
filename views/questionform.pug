@@ -1,0 +1,42 @@
+doctype html
+html
+	head
+		title Submit Questions
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			div.row.justify-content-center
+				div.lead.font-weight-bold.text-center Your Questions
+			if(interviewquestions)
+				each val in interviewquestions
+					div.row.my-2.justify-content-center
+						div.col-10.shadow-sm.p-4
+							div.p-2.lead.font-weight-bold= val.Type
+							div.p-2.lead.font-weight-bold= val.question
+							div.p-2.lead= val.answer		
+			
+			div.row.justify-content-center
+				div.col-10.shadow-sm.p-4
+					if(succesfulsubmission)	
+						div.p-2.lead.text-success Question Submitted
+					div.p-2.lead.font-weight-bold.text-center Add new question(This cannot be deleted once submitted)
+					div.p-2.lead.text-center.text-secondary (Do not refresh the page after submission)
+					form(action="/submitquestions",method="POST")
+						div.form-group
+							label(for="Type") Question Type
+							select(name="Type").form-control
+								option Electronics
+								option Software
+								option Other
+						div.form-group
+							label(for="question") Question
+							textarea(name="question",required,rows="3").form-control
+						div.form-group
+							label(for="answer") Answer
+							textarea(name="answer",required,rows="3").form-control
+						button(type="submit").btn.btn-dark Submit
+						
+
+					
+	

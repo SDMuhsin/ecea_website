@@ -19,5 +19,8 @@ nav.navbar.navbar-dark.bg-dark
 				a(href="/showusers").nav-link Members
 			
 			if(userloggedin)
-				a(href="/updateprofilepage").nav-link Update Profile
-			
+				li.nav-item
+					a(href="/updateprofilepage").nav-link Update Profile
+			if(userloggedin && (userstudyyear == 3 || userstudyyear == 4))
+				li.nav-item
+					a(href="/submitquestions").nav-link Submit Questions

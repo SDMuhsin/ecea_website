@@ -5,4 +5,7 @@ html
 		include ./bootstrap.pug
 	body
 		include ./navbar.pug
-		p.lead.p-4.mx-auto.my-auto.shadow-sm #{message}
+		if(message)
+			p.lead.p-4.mx-auto.my-auto.shadow-sm #{message}
+		else
+			p.lead.p-4.shadow-sm Restricted access

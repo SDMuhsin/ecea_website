@@ -29,3 +29,13 @@ html
 								div.col-sm-6
 									each val in display_interests
 										div.p-2= val
+							
+							if(display_interviewquestions.length)
+								div.row.justify-content-center
+									div.p-2.text-center.lead Interview Questions
+								each val in display_interviewquestions
+									div.row.my-3.justify-content-center
+										div.col-10.shadow-sm.p-4
+											div.p-2.lead.text-secondary= val.Type
+											div.p-2.lead.font-weight-bold= val.question
+											div.p-2.lead= val.answer	

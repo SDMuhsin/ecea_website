@@ -39,6 +39,8 @@ var accountSchema = mongoose.Schema({
 	personalemail:String,
 	regnumber:String,
 	
+	adminaccess:Number,
+	
 	studyyear:Number,
 	designation:String,
 	ecearank:String,
@@ -54,7 +56,7 @@ var accountSchema = mongoose.Schema({
 	secretsessionnumber:Number,
 	
 	interests:[String],
-	interviewquestions:[{type:String,question:String,answer:String}]
+	interviewquestions:[{Type:String,question:String,answer:String}]
 });
 var accountModel = mongoose.model( "accountModel", accountSchema);
 
@@ -69,7 +71,8 @@ function returnSessionData( req){
 					userstage1verification:req.session.stage1verification,
 					userstage2verification:req.session.stage2verification,
 					userstage3verification:req.session.stage3verification,
-					
+					userstudyyear:req.session.userstudyyear
+				
 	};
 }
 //GET REQUUESTS---------------------------------------------------
@@ -85,14 +88,7 @@ app.get("/signup", ( req, res) => {
 app.get("/login", ( req,res ) => {
 	console.log("Logged in?", req.session.userloggedin );
 	if(req.session.userloggedin){
-		res.render("loggedin", {
-			userloggedin:req.session.userloggedin,
-			userpersonalemailemail:req.session.userpersonalemail,
-			userinstituteemail:req.session.userinstituteemail,
-			userstage1verification:req.session.stage1verification,
-			userstage2verification:req.session.stage2verification,
-			userstage3verification:req.session.stage3verification
-			});
+		res.render("loggedin", {...returnSessionData(req)});
 	}else{
 		res.render("login")
 	}
@@ -139,7 +135,8 @@ app.get("/updateprofilepage", function( req, res){
 			
 			//update page
 			res.render("editprofile", {
-				userloggedin:req.session.userloggedin,
+				...returnSessionData(req),
+				 
 				name:resp.name,
 				studyyear:resp.studyyear,
 				designation:resp.designation,
@@ -166,18 +163,72 @@ app.get("/profile/:userreg", function( req,res ){
 			}else if( resp.stage3verification != "complete"){
 				res.render("error",{...returnSessionData(req),message:"This user's account is not verified"});
 			}else{
+				console.log("Loading interview questions of user.....");
+				console.log(resp.interviewquestions);
 				// PUBLIC PROFILE
 				res.render("profilepage",{...returnSessionData(req),
 					display_username:resp.name,
 					display_userregnumber:resp.regnumber,
-					display_interests:resp.interests
-				
+					display_interests:resp.interests,
+					display_interviewquestions:resp.interviewquestions
 				});
 			}
 		}
 		
 	})
 });
+
+app.get("/admin", function( req,res ){
+	
+	if(req.session.userloggedin){
+		//CHeck if user is admin
+		accountModel.findOne({instituteemail:req.session.userinstituteemail},function(err,resp){
+			if(err){res.render("error",{...returnSessionData(req),message:"Server side error, try again"});console.log(err);}
+			else{
+				
+				if(resp.adminaccess){
+					console.log("++++++++++++++++++ Admin login");
+					
+					//find all users
+					accountModel.find(function(err,resp){
+						if(err){res.render("error",{...returnSessionData(req),message:"Server side error, try again"});console.log(err);}
+						else{
+							resp.Password = "************";
+							res.render("admin",{...returnSessionData(req),message:"Admin",users:resp})
+						}
+					});
+					
+					
+				}
+				else{
+					res.render("error",{...returnSessionData(req),message:"You dont have admin access"});
+					console.log("+++++++++++++++++++Attempted admin access by " + userinstituteemail);
+				}
+			}
+		});
+	}
+	else{
+		res.render("error",{...returnSessionData(req),message:"Restricted Access"});
+	}
+});
+//submit questions
+app.get("/submitquestions", function( req,res ){
+	
+	if( !req.session.userloggedin || (req.session.userstudyyear!=3 && req.session.userstudyyear!=4)){
+		res.render("error",{message:"Restricted access"});
+	}else{
+		//Find previous questions
+		accountModel.findOne({instituteemail:req.session.userinstituteemail},function(err,resp){
+			if(err){res.render("error",{message:"Server side error, try again"});console.log(err);}
+			else{
+				res.render("questionform", {...returnSessionData(req),interviewquestions:resp.interviewquestions});
+			}
+			
+		})
+		
+		
+	}
+})
 
 //---------------------------------------------------------------
 //POST REQUESTS--------------------------------------------------
@@ -340,16 +391,11 @@ app.post("/login", ( req,res ) => {
 					
 					req.session.username = resp[0].name;
 					req.session.userregnumber = resp[0].regnumber;
+					req.session.userstudyyear = resp[0].studyyear;
 					//---------------------END SESSION STUFF-------------------------//
 					
 					//send user to logged in screen
-					res.render("loggedin", {
-						userloggedin:req.session.userloggedin,
-						userpersonalemailemail:req.session.userpersonalemail,
-						userinstituteemail:req.session.userinstituteemail,
-						userstage1verification:req.session.stage1verification,
-						userstage2verification:req.session.stage2verification,
-						userstage3verification:req.session.stage3verification
+					res.render("loggedin", {...returnSessionData(req)
 						});
 					
 				}else{
@@ -364,8 +410,6 @@ app.post("/login", ( req,res ) => {
 	})
 	
 });
-
-
 //verification
 app.post("/verification",( req,res ) => {
 	console.log("Verification request recieved", req.body);
@@ -464,12 +508,14 @@ app.post("/verification",( req,res ) => {
 //update user profile
 app.post("/updateprofile", function( req,res ){
 	
+	
 	try{
 		console.log("-----User " + req.session.userinstituteemail + " has requested an update");
 		console.log(req.body);
 		//update
 		var formCopy = req.body;
 		var rawString = formCopy.interests;
+		
 		formCopy.interests = formCopy.interests.split(",");
 		accountModel.updateOne({regnumber:req.body.regnumber},req.body, function( err,resp){
 			if(err){res.render("error",{message:"Server side error, try again"});console.log(err);}
@@ -482,5 +528,69 @@ app.post("/updateprofile", function( req,res ){
 		});
 	}
 	catch{}
+})
+
+//submit questions
+app.post("/submitquestions", function( req,res ){
+	
+	if(req.session.userloggedin){
+		console.log("-----REQUEST to submit a question");
+		console.log(req.body);
+		
+		accountModel.findOne({instituteemail:req.session.userinstituteemail}, function(err,resp){
+			if(err){console.log(err);res.render("error",{message:"Error, try again"});}
+			else{
+				console.log("-----User identified, showing current questions....");
+				console.log(resp.interviewquestions);
+				
+				var newQuestionList = resp.interviewquestions;
+				//console.log("checkpoint",typeof(resp.interviewquestions),typeof(req.body));
+				newQuestionList.push(req.body);
+				//console.log("checkpoint");
+				//UPDATE
+				accountModel.updateOne({instituteemail:req.session.userinstituteemail}, {interviewquestions:newQuestionList}, function(err,resp){
+					if(err){console.log(err);res.render("error",{message:"Error, try again"});}
+					else{
+						console.log("Succesfully updated interviewquestions");
+						
+						res.render("questionform",{...returnSessionData(req),succesfulsubmission:true,interviewquestions:newQuestionList})
+					}
+				});
+			}
+		})
+	}
+})
+
+//admin stage 3 verification
+app.post("/adminverification", function( req,res ){
+	if(req.session.userloggedin){
+		
+		//check if user is an admin
+		accountModel.findOne({instituteemail:req.session.userinstituteemail}, function(err,resp){
+			if(err){res.render("error",{message:"server side error, try again"});console.log(err);}
+			else{
+				if(resp.adminaccess){
+					//ADMIN Verified
+					console.log("++++++++ Admin has verfied user " + req.body);
+					accountModel.updateOne({regnumber:req.body.regnumbertoverify}, {stage3verification:"complete"},function( err, resp2){
+						if(err){res.render("error",{message:"server side error, try again"});console.log(err);}
+						else{
+							console.log("++++++++User to verify accessed and verified");
+							// UPDATE COMPLETE
+							resp.Password = "****";
+							console.log("ADMIN :" ,resp);
+							res.render("error",{...returnSessionData(req),message:"Succesfully verfied user, go back and refresh to continue"});
+						}
+					});
+				}
+				else{
+					res.render("error",{message:"You do not have admin access"});
+				}
+			}
+		});
+	}
+	else{
+		res.render("error");
+	}
 })
 app.listen(process.env.PORT ||3000);
