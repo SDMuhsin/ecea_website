@@ -18,6 +18,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(upload.array());
 
+//ENCRYPTION
+let data = "example";
+let buff = new Buffer(data);
+let base64data = buff.toString('base64');
+console.log(base64data);
+
+let buff2 = new Buffer(base64data, 'base64');
+let text1 = buff2.toString('ascii');
+console.log(text1);
+
+//ENCRYPTION
+ 
 //NODEMAILER
 var transporter = nodemailer.createTransport({
 	service:'gmail',
@@ -290,10 +302,16 @@ app.post("/signup", ( req,res ) => {
 									if( !resp.length ){
 										//SUCCESS
 										
+										//scramble password
+										var data = req.body.password1;
+										var buffencode = new Buffer(data);
+										var base64data = buffencode.toString('base64');
+										
+										console.log("Encoded password : " + base64data);
 										//STORE
 										var newAccount = new accountModel({
 											name:req.body.name,
-											Password:req.body.password1,
+											Password:base64data,
 											instituteemail:req.body.instituteemail,
 											personalemail:req.body.email,
 											regnumber:req.body.instituteemail.slice(l-20,l-11),
@@ -376,7 +394,13 @@ app.post("/login", ( req,res ) => {
 				console.log("Email found.........");
 				//IF EMAIL IS FOUND
 				//Check if passwords match
-				if( resp[0].Password == req.body.password1){
+				
+				//decrytp password
+				var data = resp[0].Password;
+				var buff = new Buffer(data,"base64");
+				var decodedpass = buff.toString("ascii");
+				
+				if( decodedpass == req.body.password1){
 					//PASSWORD MATCHED
 					console.log("password matched.........");
 					
