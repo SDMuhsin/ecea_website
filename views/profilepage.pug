@@ -9,23 +9,23 @@ html
 			div.row.justify-content-center
 				div.col-md-10.p-4.shadow-sm
 					div.p-4
-						div.container-fluid
+						div.container-fluid.mx-2.shadow-sm
 							div.row.justify-content-center
 								div.col-10.p-1
 									p.font-weight-bold.text-center.p-1 User Profile
 							div.row.justify-content-between
 								div.col-sm-6
-									div.p-2.text-left Name
+									div.p-2.text-left.font-weight-bold Name
 								div.col-sm-6
 									div.p-2.text-left #{display_username}
 							div.row.justify-content-between
 								div.col-sm-6
-									div.p-2.text-left Registration number
+									div.p-2.text-left.font-weight-bold Registration number
 								div.col-sm-6
 									div.p-2.text-left #{display_userregnumber}
 							div.row.justify-content-between
 								div.col-sm-6
-									div.p-2.text-left Interests
+									div.p-2.text-left.font-weight-bold Interests
 								div.col-sm-6
 									each val in display_interests
 										div.p-2= val
