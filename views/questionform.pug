@@ -12,8 +12,9 @@ html
 				each val in interviewquestions
 					div.row.my-2.justify-content-center
 						div.col-10.shadow-sm.p-4
-							div.p-2.lead.font-weight-bold= val.Type
+							
 							div.p-2.lead.font-weight-bold= val.question
+							div.p-2.text-secondary #{val.Type} , #{val.company}
 							div.p-2.lead= val.answer		
 			
 			div.row.justify-content-center
@@ -30,8 +31,12 @@ html
 								option Software
 								option Other
 						div.form-group
+							label(for="company") Company
+							input(name="company",required,rows="3").form-control
+						div.form-group
 							label(for="question") Question
 							textarea(name="question",required,rows="3").form-control
+
 						div.form-group
 							label(for="answer") Answer
 							textarea(name="answer",required,rows="3").form-control

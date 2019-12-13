@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		title Software Question Bank
+		include ./bootstrap.pug
+	body
+		include ./navbar.pug
+		div.container-fluid.p-4
+			
+			div.row.justify-content-center.shadow-sm.p-4
+				div.col-lg-11
+					div.container-fluid.justify-content-center
+						h5.row.justify-content-center.p-2 Interview Question Bank : #{questiontype}
+						div.row.justify-content-center
+							
+							each val in questions[questiontype]
+								div.col-lg-8.shadow-sm.m-2.p-4
+
+									h6= val.question
+									div.block-quote= val.answer
+									div.blockquote-footer.mt-4 Asked by : #{val.company}
+									div.blockquote-footer Submitted by #{val.user}, #{val.userregno}							

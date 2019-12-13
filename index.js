@@ -68,7 +68,7 @@ var accountSchema = mongoose.Schema({
 	secretsessionnumber:Number,
 	
 	interests:[String],
-	interviewquestions:[{Type:String,question:String,answer:String}]
+	interviewquestions:[{Type:String,question:String,company:String,answer:String}]
 });
 var accountModel = mongoose.model( "accountModel", accountSchema);
 
@@ -241,6 +241,63 @@ app.get("/submitquestions", function( req,res ){
 		
 	}
 })
+
+//QUESTION BANK PAGE
+app.get("/questionbank/:stream", function( req,res ){
+	
+	//Get all questions
+	accountModel.find({}, function(err,resp){
+		if(err){res.render("error", {...returnSessionData(req),message:"Server side error, try again"});console.log(err);}
+		else if(resp.length){
+			
+			var softwareQuestions = [];
+			var electronicsQuestions = [];
+			var otherQuestions = [];
+			
+			for(let user = 0; user < resp.length; user++){
+				//console.log("Resp[user].interviewquestions.length:" ,resp[user].interviewquestions.length);
+				for(let question = 0; question < resp[user].interviewquestions.length; question++){
+					//console.log(resp[user].interviewquestions[question].Type,"-------------");
+					//resp[user].interviewquestions[question].user = resp[user].name;
+					//console.log(resp[user].interviewquestions[question]);
+					if(resp[user].interviewquestions[question].Type == "Software"){
+						var temp = resp[user].interviewquestions[question];
+						temp = temp.toJSON();
+						temp.user = resp[user].name;
+						temp.userregno = resp[user].regnumber;
+						softwareQuestions.push(temp);
+					}else if(resp[user].interviewquestions[question].Type == "Electronics"){			
+						var temp = resp[user].interviewquestions[question];
+						temp = temp.toJSON();
+						temp.user = resp[user].name;
+						temp.userregno = resp[user].regnumber;
+						electronicsQuestions.push(temp);
+					}else if(resp[user].interviewquestions[question].Type == "Other"){
+						var temp = resp[user].interviewquestions[question];
+						temp = temp.toJSON();
+						temp.user = resp[user].name;
+						temp.userregno = resp[user].regnumber;
+						otherQuestions.push(temp);
+					}
+				}
+			}
+			console.log("Software : ",softwareQuestions);
+			console.log("Electronics : ",electronicsQuestions);
+			console.log("Other : ",otherQuestions);
+			
+			res.render("softwarebank",{...returnSessionData(req),questiontype:req.params.stream,questions:{
+				software:softwareQuestions,
+				electronics:electronicsQuestions,
+				other:otherQuestions
+			}})
+		}else{
+			res.render("error", {...returnSessionData(req),message:"Empty database error"});console.log(err);
+		}
+	} );
+	
+	
+	
+});
 
 //---------------------------------------------------------------
 //POST REQUESTS--------------------------------------------------
@@ -566,7 +623,8 @@ app.post("/submitquestions", function( req,res ){
 			else{
 				console.log("-----User identified, showing current questions....");
 				console.log(resp.interviewquestions);
-				
+				console.log("-----Showing new questions");
+				console.log(req.body);
 				var newQuestionList = resp.interviewquestions;
 				//console.log("checkpoint",typeof(resp.interviewquestions),typeof(req.body));
 				newQuestionList.push(req.body);

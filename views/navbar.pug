@@ -24,3 +24,9 @@ nav.navbar.navbar-dark.bg-dark
 			if(userloggedin && (userstudyyear == 3 || userstudyyear == 4))
 				li.nav-item
 					a(href="/submitquestions").nav-link Submit Questions
+			li.nav-item.dropdown
+				a(role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false").nav-link.dropdown-toggle#navbarDropdown Interview Question Bank
+				div(aria-labelledby="navbarDropdown").dropdown-menu
+					a(href="/questionbank/electronics").dropdown-item Electronics Questions
+					a(href="/questionbank/software").dropdown-item Software Questions
+					a(href="/questionbank/other").dropdown-item Miscellaneous Questions
